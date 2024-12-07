@@ -1,0 +1,191 @@
+\chapter{How was helped by AI}
+\label{chapter4}
+I separate my question into 2 categories, the first one is the scientific one. This relates to the true mathematical or Matlab problem that I encounter. As for operational questions, it means what I face to convey my thoughts, like editing on Overleaf VS code, sharing to my GitHub by git setting(unsolved), and so to continue to be dealt with. Some of the questions may be naive and stupid as I am still in the preliminary stage of accumulating my mathematical and programming knowledge. However, this shows a flow of my thinking. 
+
+\section{Scientific Question}
+\subsection{Convergence}\label{Solve conbvergence}
+The convergence of power iteration refers to how the iterates of the algorithm approach the dominant eigenvector of the matrix.
+
+The theorem you provided describes the conditions under which the power iteration method converges and gives a rate of convergence. Here’s a breakdown of the theorem:
+
+    Convergence Rate: The statement $\|v^{(k)} - (\pm q_1)\| = O (|\frac{\lambda_2}{\lambda_1}|^{2k})$ describes how quickly the iterates $(v^{(k)})$ converge to the dominant eigenvector $q_1$ (up to a sign). The term $O (|\frac{\lambda_2}{\lambda_1}|^{2k})$ indicates that the error in the approximation decreases exponentially with each iteration. The ratio  determines the rate of convergence: the smaller this ratio, the faster the convergence.
+
+However, one mistake the AI made is that the convergence rate is not the smaller, the faseter where the demonstration mentioned in \ref{convergence demostration}
+
+\cs{check}
+In summary, the power iteration convergence theorem ensures that if the initial vector is not orthogonal to the dominant eigenvector, the power iteration method will converge to the dominant eigenvector at a rate determined by the ratio of the second largest and largest eigenvalues.
+
+\subsection{Connection between transpose and conjugate}
+In numerical analysis, particularly in the context of Schur decomposition, the concept of the conjugate transpose (also known as the Hermitian transpose) is important, especially when dealing with complex matrices.
+
+For a given complex matrix \( A \), the conjugate transpose, denoted as \( A^* \), is obtained by taking the transpose of \( A \) and then taking the complex conjugate of each entry. Mathematically, if \( A = [a_{ij}] \), then the conjugate transpose \( A^* = [\overline{a_{ji}}] \), where \( \overline{a_{ji}} \) is the complex conjugate of the element \( a_{ji} \).
+
+In the context of Schur decomposition, any square matrix \( A \) can be decomposed into the form:
+
+\[ A = Q T Q^* \]
+
+where \( Q \) is a unitary matrix (meaning \( Q^* Q = I \), where \( I \) is the identity matrix), and \( T \) is an upper triangular matrix. If \( A \) is a real matrix, then \( Q \) is an orthogonal matrix, and the decomposition becomes:
+
+\[ A = Q T Q^T \]
+
+Here, \( Q^T \) is the transpose of \( Q \), which is the same as the conjugate transpose when dealing with real matrices since the complex conjugate of a real number is the number itself.
+
+The Schur decomposition is useful because it simplifies many matrix computations, such as finding eigenvalues, since the eigenvalues of \( A \) are the same as those of the upper triangular matrix \( T \). The use of the conjugate transpose ensures that the decomposition respects the properties of the matrix, particularly when dealing with complex numbers.
+\subsection{Singular Matrix}
+A singular matrix is a square matrix that does not have an inverse. This occurs when the determinant of the matrix is zero. Singular matrices are important in linear algebra because they indicate systems of equations that do not have a unique solution. Here's a deeper look into singular matrices, with examples and their connection to similarity and Schur transformations.
+
+\begin{definition}
+A matrix \( A \) is called singular if there is no matrix \( B \) such that \( AB = BA = I \), where \( I \) is the identity matrix.
+This is equivalent to saying that the determinant of \( A \), denoted \( \det(A) \), is zero.
+\end{definition}
+ 
+
+Example of a Singular Matrix:
+Consider the matrix:
+\[ 
+A = \begin{bmatrix} 2 & 4 \\ 1 & 2 \end{bmatrix}
+\]
+
+Determinant Calculation
+  \[
+  \det(A) = (2)(2) - (4)(1) = 4 - 4 = 0
+  \]
+
+Since the determinant is zero, \( A \) is singular.
+
+Properties:
+- A singular matrix cannot be inverted.
+- The rows (or columns) of a singular matrix are linearly dependent.
+- In the context of systems of linear equations, a singular matrix indicates that the system has either no solutions or infinitely many solutions.
+
+Connection to Similarity Transformations:
+- **Similarity Transformation**: Two matrices \( A \) and \( B \) are similar if there exists an invertible matrix \( P \) such that \( B = P^{-1}AP \).
+- Singular matrices can be similar to other singular matrices, but they cannot be similar to non-singular matrices because similarity preserves eigenvalues, and a singular matrix has at least one eigenvalue equal to zero.
+
+Connection to Schur Transformation:
+
+Schur Decomposition: For any square matrix \( A \), there exists a unitary matrix \( Q \) and an upper triangular matrix \( T \) such that:
+  \[
+  A = Q T Q^*
+  \]
+If \( A \) is singular, then the upper triangular matrix \( T \) obtained from the Schur decomposition will also be singular. This means at least one of the diagonal entries of \( T \) will be zero, reflecting the zero eigenvalue of \( A \).
+
+Example with Schur Decomposition:
+Consider a singular matrix:
+\[ 
+A = \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}
+\]
+
+Schur Decomposition:
+  - Since \( A \) is already upper triangular, it is its own Schur form.
+  - The eigenvalues of \( A \), which are the diagonal elements of \( T \), are both zero, indicating that \( A \) is singular.
+
+Summary:
+A singular matrix is one that lacks an inverse, typically due to linear dependence among its rows or columns. It plays a crucial role in understanding the behaviour of linear systems and transformations. Similarity transformations preserve singularity, and Schur decomposition provides a structured way to analyze and confirm the singularity of a matrix through its triangular form.
+\subsection{Similarity Transposes}
+\subsection{Jordan Normal Form}
+\label{Q2 connection between transpose and conjugate}
+\subsection{Definition Clarification }
+% \begin{itemize}
+%     \item \textbf{Definition}: Round-off errors arise when numbers are approximated due to the finite precision of computer arithmetic. This occurs because computers use a fixed number of bits to represent real numbers, leading to small discrepancies between the true value and the represented value.
+%     \item \textbf{Example}: Consider the decimal number 0.1. In binary, it cannot be represented exactly, leading to a small error when performing arithmetic operations.
+%     \item \textbf{Impact}: Round-off errors can accumulate in iterative processes or large computations, potentially leading to significant inaccuracies.
+% \end{itemize}
+
+% \section*{Condition Number}
+% \begin{itemize}
+%     \item \textbf{Definition}: The condition number of a matrix (or a problem) is a measure of how sensitive the solution of a problem is to small changes or errors in the input data. It is defined as the ratio of the relative change in the output to the relative change in the input.
+%     \item \textbf{Mathematical Definition}: For a matrix \( A \), the condition number \( \kappa(A) \) is given by:
+%     \[
+%     \kappa(A) = \|A\| \cdot \|A^{-1}\|
+%     \]
+%     where \( \|\cdot\| \) denotes a matrix norm.
+%     \item \textbf{Interpretation}: 
+%     \begin{itemize}
+%         \item A condition number close to 1 indicates a well-conditioned matrix, where small changes in input lead to small changes in output.
+%         \item A large condition number indicates an ill-conditioned matrix, where small changes in input can cause large changes in output.
+%     \end{itemize}
+%     \item \textbf{Example}: Solving linear systems with an ill-conditioned matrix can lead to large errors in the solution, even if the input data is slightly perturbed.
+% \end{itemize}
+
+% \section*{Stability}
+% \begin{itemize}
+%     \item \textbf{Definition}: Stability in numerical analysis refers to how errors (such as round-off errors or errors in the input data) propagate through an algorithm. An algorithm is considered stable if small errors in the input or intermediate steps do not cause large errors in the final result.
+%     \item \textbf{Types of Stability}:
+%     \begin{itemize}
+%         \item \textbf{Forward Stability}: The computed solution is close to the exact solution for the given input.
+%         \item \textbf{Backward Stability}: The computed solution is the exact solution to a problem that is close to the original problem.
+%     \end{itemize}
+%     \item \textbf{Example}: Gaussian elimination with partial pivoting is generally stable for solving linear systems, meaning it produces reasonably accurate results even with round-off errors.
+% \end{itemize}
+
+% \section*{Putting It All Together}
+% \begin{itemize}
+%     \item \textbf{Round-off errors} can affect the accuracy of numerical computations, especially in iterative algorithms or when dealing with very large or very small numbers.
+%     \item The \textbf{condition number} helps assess the sensitivity of a problem to input errors, guiding the choice of algorithms or indicating the need for data preprocessing.
+%     \item \textbf{Stability} ensures that an algorithm can handle errors without producing wildly inaccurate results, making it crucial for reliable numerical solutions.
+% \end{itemize}
+In numerical analysis, it is important to distinguish between several key concepts: \textbf{conditionality}, \textbf{stability}, \textbf{accuracy}, \textbf{consistency}, and \textbf{convergence}. Each of these plays a crucial role in understanding and evaluating numerical methods.
+
+
+\begin{itemize}
+    \item \textit{Definition:} Conditionality refers to the sensitivity of a problem's solution to small changes in the input data.
+    \item \textit{Well-conditioned:} Small changes in input lead to small changes in output.
+    \item \textit{Ill-conditioned:} Small changes in input can cause large changes in output.
+\end{itemize}
+
+
+\begin{itemize}
+    \item \textit{Definition:} Stability refers to an algorithm's ability to control errors introduced during computation, such as round-off errors.
+    \item \textit{Stable Algorithm:} Does not significantly amplify errors during computation.
+\end{itemize}
+
+
+\begin{itemize}
+    \item \textit{Definition:} Accuracy measures how close a computed solution is to the exact solution of a problem.
+    \item \textit{Components:} Includes both round-off errors and truncation errors.
+\end{itemize}
+
+
+\begin{itemize}
+    \item \textit{Definition:} Consistency relates to the behavior of a numerical method as the discretization parameters approach zero.
+    \item \textit{Consistent Method:} Local truncation error goes to zero as discretization parameters go to zero.
+\end{itemize}
+
+
+\begin{itemize}
+    \item \textit{Definition:} Convergence ensures that as the discretization is refined, the numerical solution approaches the exact solution.
+    \item \textit{Relation:} A method is convergent if it is both consistent and stable (Lax Equivalence Theorem).
+\end{itemize}
+
+\section{Operational Question}
+
+\subsection{Gantt Chart to manage my project}
+\subsection{Onsite LaTeX building on VS code}
+Two snippets are used to configure the LaTeX to VS code in our JSON file. \cite{exampleWebsite}
+\subsection{Sharing to GitHub}
+\subsection{Ref with color}
+For this one, AI provided 4 options: Bold, Coloring, hyperlinks and the combining. I chose the coloring one and the answer given by AI is 
+\begin{verbatim}
+% Use the xcolor package for coloring text
+\usepackage{xcolor}
+
+% Use the etoolbox package to redefine commands
+\usepackage{etoolbox}
+
+% Use the hyperref package for clickable links
+\usepackage{hyperref}
+   \AtBeginDocument{%
+    \let\oldref\ref
+    \renewcommand{\ref}[1]{\textcolor{blue}{\textbf{\oldref{#1}}}}
+}
+\end{verbatim}
+Further I want to remove the default red box used by the hyperref package. So I asked again and it provides a more customized choice that 
+\begin{verbatim}
+    \hypersetup{
+    colorlinks=true,      % Enable colored links instead of boxes
+    linkcolor=blue,       % Color for internal links (sections, pages)
+    citecolor=blue,       % Color for citations
+    urlcolor=blue         % Color for URLs
+}
+\end{verbatim}

@@ -1,0 +1,51 @@
+\chapter{QR factorization}
+Introducing the Householder QR factorization algorithm here. 
+\subsection{Pseudo Codes for QR factorization algorithm}
+\begin{algorithm}
+    \caption{Modified Gram-Schmidt for QR Decomposition}
+    \begin{algorithmic}
+        \STATE for \( k = 1, 2, \dots, n \)
+        \STATE \quad \( x = A(k:m, k) \)
+        \STATE \quad \( v_k = \text{sign}(x) \|x\| e_1 + x \)
+        \STATE \quad \( v_k = \frac{v_k}{\|v_k\|} \)
+        \STATE \quad for \( j = k, k+1, \dots, n \)
+        \STATE \quad \quad \( A(k:m, j) = A(k:m, j) - 2 v_k \langle {v_k}^T, A(k:m, j) \rangle \)
+        \STATE \quad end for
+        \STATE end for
+    \end{algorithmic}
+\end{algorithm}
+
+
+
+\subsubsection{Complexity}
+\begin{itemize}
+    \item ${v_k}^T A(k:m,j)$ = 2(m-k+1) flops
+    \item $2v_k({v_k}^T A(k:m,j))$ = m-k+1 flops
+    \item  $A(k:m,j) = A(k:m,j) - 2v_k \langle v_k, A(k:m,j)\rangle$ = (m-k+1) flops
+\end{itemize}
+All for the worst scenarios 
+\begin{equation}
+    \sum = 4(m-k+1)(n-k+1) = 2mn^2 - \frac{2}{3}m^3
+\end{equation}
+
+
+
+\section{Givens QR factorization}
+\subsection{Algorithm}
+
+\subsubsection{Complexity}
+\begin{equation}
+    flops = 3mn^2 - n^3
+\end{equation}
+Now, it seems this take 1.5 times more than the Householder method
+
+So, one question is supposed to come out is that why do we need Givens? The reason is that it is more flexible and it will be more convenient when there are a few elements to be eliminated.
+\subsection{Example}
+Hessenberg via Givens
+\newline
+\begin{equation}
+    flops = 
+\end{equation}
+
+\section{Application}
+\subsection{Least square}

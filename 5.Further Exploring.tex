@@ -1,0 +1,47 @@
+\chapter{Further Exploring}
+\label{chapter5}
+\section{Utilization}
+In my FYP, I simulate the stellar evolution given different rates, which describe the translation among dust, stars and remnants. It could now be based on the difference equation to generate a matrix below. What I am thinking is that
+\begin{itemize}
+    \item Will it be helpful for me to diagonalize or factorize or both or many further to the matrix?
+    \item Could I get a differential equation based on my existing difference equation?
+    \item Could I solve the differential equation based on my factorization like finding the eigenvalue or anything else?
+    \item Moreover, what roles do these eigenvalues or eigenvectors perform physically? 
+\end{itemize}
+
+\begin{equation}
+\begin{split}
+    G_{t+1} = G_t (e-a) + S_t i \\ 
+    S_{t+1} = S_t(j-b-c-d-i) + G_t a \\
+    BH_{t+1} = B_th + S_td \\
+    WD _{t+1} = WD_tf + S_tb\\
+    NS_{t+1} = NS_tg + S_tc\\
+\end{split}
+\end{equation}
+
+
+\begin{equation}
+\begin{bmatrix}
+G_{t+1} \\ S_{t+1} \\ BH_{t+1} \\ WD_{t+1} \\ NS_{t+1} 
+\end{bmatrix}
+=
+\begin{bmatrix}
+    e-a & i & 0 & 0 & 0 \\
+    a & j-b-c-d-i & 0 & 0 & 0 \\
+    0 & d & h & 0 & 0 \\
+    0 & b & 0 & f & 0 \\
+    0 & c & 0 & 0 & g \\
+\end{bmatrix}
+\begin{bmatrix}
+    G_{t} \\ S_{t} \\ BH_{t} \\ WD_{t} \\ NS_{t}
+\end{bmatrix}
+\label{Matrix Evolution}
+\end{equation}
+
+So, this is just a simple hypothesis of some ideas, which I hope that I could utilize in the future.
+
+\section{Unsolved}
+\begin{itemize}
+    \item Proof of the listed theorems
+    \item Claim in Hessenberg Part like the calculation of complexity. Actually, calculating the complexity would be the most involved one as we need to know clearly the process and then do the calculation, without missing any details. 
+\end{itemize}

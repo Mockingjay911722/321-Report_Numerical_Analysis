@@ -1,0 +1,1186 @@
+\chapter{Eigenvalue Problem}
+\label{chapter2}
+
+    \begin{definition}[Eigenvalue Problem]
+        Let $A\in \Re^{n*n}$, a non-zero vector $x\in\Re^n$ is a right eigenvector with corresponding eigenvalue $\lambda \in \Re$ if $Ax = \lambda x$. We also extended  from $\Re$ to $F$, including $\Re \text{ and } C$.
+    \end{definition}
+    
+    \begin{definition}[Spectrum]
+        The set of A's eigenvalues is called its spectrum, we denote $\Lambda(A)$
+    \end{definition}
+
+    \begin{definition}[Eigendecomposition]
+    The eigendecomposition of a diagonalizable matrix, A, is $A = X \Lambda X^{-1}$
+        
+    \end{definition}
+
+    \begin{theorem}[Symmetric Positive Definite(SPD) Systems]
+        If A is SPD, then there exists a unique lower triangular G, whether strictly positive entries on its diagonal, such that
+        \[A=GG^T\]
+    \end{theorem}
+For an eigenvalue problem, there are two values expected to be found: 1. eigenvalues 2. eigenvectors
+
+Traditionally, eigenvalue problem is solved by the characteristic polynomial of A, denoted $P_A(z)$, is the degree m polynomial given by 
+\[P_A(z) = det(zI-A)\]
+However, no closed form solution exist for degree 5 or higher polynomial as the roots can not be found exactly using a finite number of rational operations. Therefore we must use approximations to find their eigenvalues, suggesting the iterative methods, like forming the characteristic polynomial or using the numerical rood-finding to extract the approximate roots/eigenvalues.
+
+However, the ill-conditioned problem, i.e. a small change or error in the input drastically change the roots. More effective strategies based on finding eigendecomposition exist. Here, we explore some of them
+\section{Naive Approach}
+    \begin{theorem}[Gershgorin circle theorem]
+        Let A be any square matrix. The eigenvalues $\lambda$ of A are located in the union of the n disks (on the complex plane) given by 
+    
+        \[|\lambda-a_{ii}| \leq \sum_{j\neq i} |a_{ij}| \]
+        
+    Disks are denoted by $D(a_{ii}, R_i$) , where $R_i = \sum_{j\neq i} |a_{ij}| $
+    \end{theorem}
+    
+\section{Rayleigh quotient}
+The eigenvalue problem is consider to for the matrices $A\in \Re^{n*n}$ that are symmetric $A^T=A$
+    \begin{definition}[Rayleigh quotient]
+        The Rayleigh quotient of a nonzero vector x with respect to A is 
+        
+        \[r(x) = \frac{x^TAx}{x^T x}\]
+        Note that: if x is a eigenvector of A, then $r(x)$ becomes the eigenvalue $\lambda$. Otherwise, r(x) behaves most like an eigenvalue for a given vector x. 
+    \end{definition}
+
+We then transfer the raw Rayleigh quotient in another way by considering the $n*1$ least squares problem for an unknown $\alpha \in \Re$:
+    \begin{equation}
+        \min_\alpha  = \mathbf{ \left\| 
+        \begin{bmatrix}
+        x_1 \\ x_2 \\ ... \\ x_n
+        \end{bmatrix}
+        \alpha-Ax \right\|}_2 ^2
+    \end{equation}
+
+Then we construct the the normal euqations for it, we have 
+    \begin{equation}
+        (x^Tx)\alpha = x^T(Ax)
+    \end{equation}
+Then $\alpha = r(x)$
+
+
+    \begin{theorem}
+        Let $q_j$ be an eigenvector and x $\approx$ $q_j$. Then $r(x) - r(q_j)$ = $O({\|x-q_j\|)}^2$ as x $\rightarrow$ $q_j$
+    \end{theorem}
+That is, as x $\rightarrow$ $\infty$, the error in the estimate of the eigenvalue $\lambda$ decreases quadratically.
+
+\cs{To summarize here, eigenvalues are approximated by using the Rayleigh quotient, given an approximation of an eigenvector.}
+
+
+\section{Power Iteration}
+\label{Section Power Iteration}
+The idea of the power iteration is 
+    \begin{itemize}
+    \label{Power Iteration}
+        \item Start with an initial vector $v^{(0)}$ then repeatedly multiply by A and normalize
+        \item $v^{(1)}$ = $\frac{v^{(0)}}{\|Av^{(0)}\|}$
+        \item $v^{(2)}$ = $\frac{v^{(1)}}{\|Av^{(1)}\|}$...
+        \item $v^{(k)}$ = $\frac{v^{(k-1)}}{\|Av^{(k-1)}\|}$
+    \end{itemize}
+In the limit, the approximation $v^{(k)}$ approaches $q_1$. where $q_1$ is the eigenvector associated with the largest magnitude eigenvalue, i.e., 
+    \begin{equation}
+        lim_{k \rightarrow \infty} v^{(k)} = q_1
+    \end{equation}
+
+\cs{Now we could summarize why this is helpful for finding an eigenvalue}
+    \begin{itemize}
+        \item Let $v^{(0)}$ be an initial guess at the eigenvector $q_1$
+        \item Also. let ${q_i}$ denote the set of orthonormal eigenvectors.
+        \item Then $v^{(0)} = c_1q_1 + c_2q_2 + ... + c_nq_n$, for some coefficients $c_i$, because the eigenvectors span the space.
+        \item Now since $Aq_i = \lambda_iq_i$, we can write
+        
+        $Av^{(0)} = c_1\lambda_1q_1 + c_2\lambda_2q_2 + ... + c_n\lambda_nq_n  $
+        \item Further multiplication by A gives
+
+        $A^kv^{(0)} = c_1{\lambda_1}^kq_1 + c_2{\lambda_2}^kq_2 + ... + c_n{\lambda_n}^kq_n $
+
+                    = ${\lambda_1}^k (c_1q_1 + c_2{(\frac{\lambda_2}{\lambda_1})}^kq_2 + ... +c_n{(\frac{\lambda_n}{\lambda_1})}^kq_n)  $
+
+        Now, if we have $|\lambda_1| > |\lambda_2| \geq |\lambda_3| \geq... \geq|\lambda_n| $ and $c_1={q_1}^T v^{(0)} \neq 0$, then we observe the following:
+
+        \begin{equation}
+            (\frac{\lambda_i}{\lambda_1})^k \rightarrow 0 \text{ as } k \rightarrow \infty \text{ for } i > 1
+        \end{equation}
+    Therefore
+        \begin{equation}
+            q_1 = \frac{A^kv^{(0)}}{\|A^kv^{(0)}\|} \text{ as } k \rightarrow \infty
+        \end{equation}
+        This is the eigenvector for the largest magnitude eigenvalue
+    \end{itemize}
+
+    \cs{We summarize all to give a theorem and the Pseudo codes}
+    \subsection{Power Iteration Convergence}
+    What the convergence here is solved by AI \ref{Solve conbvergence}
+    \begin{theorem}[Power Iteration convergence]
+        Suppose $|\lambda_1| > |\lambda_2| \geq |\lambda_3| \geq... \geq|\lambda_n| $ and ${q_1}^T v^{(0)} \neq 0$. Then \[\|v^{(k)} - (\pm q_1)\| = O (|\frac{\lambda_2}{\lambda_1}|^{k}) \text{ and } |\lambda^{(k)} - \lambda_1| = O(|\frac{\lambda_2}{\lambda_1}|^{2k})\] as k $\rightarrow$ $\infty$
+    \end{theorem}
+    Note:
+    \begin{itemize}
+        \item This is linear convergence for the eigenvector with convergence factor is $|\frac{\lambda_2}{\lambda_1}|$
+        \item Convergence is therefore slow if $|\lambda_2| \approx |\lambda_1|$, i.e., if the first two eigenvalues are close in magnitude.
+        \item There will be no convergence at all if $|\lambda_2| = |\lambda_1|$
+    \end{itemize}
+    
+    \subsection{Pseudo Codes for Power Iteration Algorithm}
+    \begin{algorithm}
+    \caption{Power Iteration Algorithm}
+    \begin{algorithmic}
+        \STATE \( v^{(0)} \) = initial guess such that the norm of \( v^{(0)} = 1 \)
+        \STATE for \( k = 1, 2, \dots \)
+        \STATE \quad \( w = A v^{(k-1)} \)
+        \STATE \quad \( v^{(k)} = \frac{w}{\|w\|} \)
+        \STATE \quad \( \lambda^{(k)} = (v^{(k)})^T A v^{(k)} \)
+        \STATE end for
+    \end{algorithmic}
+\end{algorithm}
+However, how large k is should be consider further.
+\cs{To summarize here, eigenvalues are approximated by using the Power Iteration, given an approximation of an eigenvector in terms of the largest eigenvalue of the given matrix}
+
+\section{Shifting Eigenvalues}
+\label{Section Shifting Eigenvalues }
+Up to now, we have seen how to approximate the eigenvector with respect to the largest eigenvalue. How about other eigenvalues? This is what we need to talk about in this section. We claim the inverse iteration can recover the eigenvector $q_n$ associated with the smallest magnitude eigenvalue.
+
+Note: We assume always A is invertible. This is fine as our assumption before, that A is SPD.
+The idea is provided to make a comparision with \ref{Power Iteration}(Power Iteration)
+
+    \begin{itemize}
+        \item The inverse iteration instead multiplies the starting vector $v^{(0)}$ by $A^{-1}$
+        \item $Ax = \lambda x$ then $x = \lambda A^{(-1)}x$ and so 
+        $\frac{1}{\lambda}x = A^{(-1)}x$, assuming $\lambda \neq = 0$
+        \item Therefore, the eigenvalues of $A^{(-1)}$ are the reciprocals of the eigenvalues of A i.e.
+        If \[\Lambda(A) = {\lambda_i}, \text{ then } \Lambda(A^{-1}) = {\frac{1}{\lambda_i}}\]
+        \item This help us find $q_n$ instead of $q_1$
+        same proof with \ref{Power Iteration}
+    \end{itemize}
+\subsection{Pseudo Codes for Inverse Iteration Algorithm}
+Then we give the inverse Iteration Algorithm 
+    \begin{algorithm}
+    \caption{Basic Inverse Iteration Algorithm}
+    \begin{algorithmic}
+        \STATE \( v^{(0)} \) = initial guess such that the norm of \( v^{(0)} = 1 \)
+        \STATE for \( k = 1, 2, \dots \)
+        \STATE \quad \( w = A^{(-1)} v^{(k-1)} \)
+        \STATE \quad \( v^{(k)} = \frac{w}{\|w\|} \)
+        \STATE \quad \( \lambda^{(k)} = (v^{(k)})^T A v^{(k)} \)
+        \STATE end for
+    \end{algorithmic}
+\end{algorithm}
+
+Up to now, we could find two eigenvectors $q_1$ and $q_n$ with the largest and smallest magnitude of eigenvalues, respectively. Really amazing, a giant step. Then, what we need to do is to shift more eigenvalues. The idea lying behind is the fact that the smallest possible magnitude eigenvalues is zero. So, we then try to modify A so the "target" eigenvector has the smallest magnitude eigenvalue near zero.
+
+\section{Continue Shifting}
+\begin{itemize}
+    \item Consider $B = A-\mu I$, with $\mu$ not an eigenvalue
+    \item If we now the eigenvectors and eigenvalues of A, x and $\lambda$
+    \item Then
+        \[Ax - \mu x = \lambda x - \mu x \]   
+        \[(A-\mu I)x = (\lambda-\mu)x\]
+    \item Therefore we have for the matrix B, the same eigenvectors and the shifted $\lambda_j-\mu$ for $\lambda_j \in \Lambda(A)$
+    \item Further, we expect $\lambda_j$ close to $\mu$, then $\lambda_j-\mu$ is the smallest magnitude eigenvalue of B.
+    \item We can then appply the inverse iteration to find its eigenvalue $q_j$
+ \end{itemize}
+ This is an advantage of the inverse iteration over the power iteration. With it, we can select the specific eigenvector to recover, if we can choose $\mu$ close to the corresponding $\lambda_j$,
+ Next theorem shows the linear convergence behaviour of the inverse iteration.
+ \subsection{Inverse Iteration Convergence}
+ \begin{theorem}
+ \label{Inverse Iteration Convergence}
+     Suppose $\lambda_J$ is the closest eigenvalue to $\mu$ and $\lambda_L$ is the next closest, or $|\mu-\lambda_J| < |\mu - \lambda_L| \leq |\mu - \lambda_j|$, for $j\neq J$, and ${q_J}^Tv^{(0)} \neq 0$
+
+     Then \[\|v^{(k)} - (\pm q_J)\| = O{(|\frac{\mu - \lambda_J}{\mu - \lambda_L}|^{k})}\]
+     and\[|\lambda^{(k)} -  \lambda_J| = O{(|\frac{\mu - \lambda_J}{\mu - \lambda_L}|^{2k})}\]
+     as $k \rightarrow \infty$
+ \end{theorem}
+ So the convergence depends  on ratios of shifted eigenvalues rather than original eigenvalues.
+\subsection{Pseudo Codes for Inverse Iteration Algorithm}
+ \begin{algorithm}
+    \caption{(Shifted) Inverse Iteration Algorithm}
+    \begin{algorithmic}
+        \STATE \( v^{(0)} \) = initial guess such that the norm of \( v^{(0)} = 1 \)
+        \STATE for \( k = 1, 2, \dots \)
+        \STATE \quad \( w = (A-\mu I)^{(-1)} v^{(k-1)} \)
+        \STATE \quad \( v^{(k)} = \frac{w}{\|w\|} \)
+        \STATE \quad \( \lambda^{(k)} = (v^{(k)})^T A v^{(k)} \)
+        \STATE end for
+    \end{algorithmic}
+\end{algorithm}
+The shifted inverse iteration needs an estimate of the eigenvalue $\lambda_j$ to use for $\mu$
+By observation:
+\begin{itemize}
+    \item Rayleigh quotient, r(v), estimates and eigenvalue given its approximate eigenvector v(with quadratic convergence)
+    \item Inverse iteration estimates an eigenvector given approximate  eigenvalue $\mu$ (with linear convergence by the theorem \ref{Inverse Iteration Convergence})
+\end{itemize}
+\section{Rayleigh Quotient Iteration}
+\label{Section Rayleigh Quotient Iteration}
+So the Rayleigh quotient Iteration combines the two. It is the inverse iteration updating $\mu$ with the latest guess $\lambda_j$ at each step, where the $\lambda_J$ and $q_J$ are updated by computing Rayleigh quotient and doing inverse iteration.
+\subsection{Rayleigh quotient iteration convergence}
+\begin{theorem}[Rayleigh quotient iteration convergence]
+    RQI converges cubically for “almost all” starting vectors \(v^{(0)}\). That is,
+\[
+\|v^{(k+1)} - \pm (q_J)\| = O\big(\|v^{(k)} - \pm (q_J)\|^3,
+\]
+and
+\[
+|\lambda^{(k+1)} - \lambda_J| = O\big(|\lambda^{(k)} - \lambda_J|^3\big).
+\]
+\end{theorem}
+\subsection{Pseudo Codes for Rayleigh Quotient Algorithm}
+\begin{algorithm}
+    \caption{Rayleigh Quotient Algorithm}
+    \begin{algorithmic}
+        \STATE \( v^{(0)} \) = initial guess such that the norm of \( v^{(0)} = 1 \)
+        \STATE \(\lambda^{(0)} = {(v^{(0)})}^T  Av^{(0)} = r(v^{(0)})\)
+        \STATE for \( k = 1, 2, \dots \)
+        \STATE \quad Solve \((A-\lambda^{(k-1)}I)w=v^{(k-1)} \)
+        \STATE \quad \( v^{(k)} = \frac{w}{\|w\|} \)
+        \STATE \quad \( \lambda^{(k)} = (v^{(k)})^T A v^{(k)} \)
+        \STATE end for
+    \end{algorithmic}
+\end{algorithm}
+\cs{But up now, the question is that we use the power, inverse and Rayleigh quotient iterations for finding a single eigenvalue and eigenvector. How about finding more than one pair eigenvalue and eigenvector at a time. We introduce the final section of the algorithm :}
+\section{QR algorithm}
+\label{Section QR algorithm}
+\begin{definition}
+    Matrices A and B are similar if $B = X^{-1}AX$ for some nonsingular X.
+\end{definition}
+\begin{definition}
+    \label{similarity transformation}
+    If $X\in \Re{(n*n)}$ is nonsingular, then A $\rightarrow$ $X^{-1}AX$ is called a similarity transformation of A.
+\end{definition}
+\begin{theorem}
+    If matrices A and B are similar, then they have the same characteristic polynomial, and hence the same eigenvalues.
+\end{theorem}
+The idea is to apply a sequence of similarity transformations to A that converge to a diagonal matrix, which has the eigenvalues on its diagonal.
+We consider simple cases firstly:
+    \begin{itemize}
+        \item $A^{(k-1)}$ = $Q^{(k)}R^{(k)}$ so that
+        \centering ${Q^{(k)}}^TA^{(k-1)}$ = $R^{(k)}$
+    \end{itemize}
+Define the next matrix, $A^(k)$, as $R^{(k)}Q^{(k)}$, then yields a similarity transformation:
+    \begin{equation}
+        A^{(k)} := R^{(k)}Q^{(k)}
+        =({Q^{(k)}})^TA^{(k-1)}Q^{(k)}
+    \end{equation}
+Therefore, $A^{(k-1)}$ and $A^{(k)}$ are similar.
+So the basic QR iteration simply repeats this process as shown in the next pseudo algorithm
+\subsection{Basic simple QR iteration pseudo algorithm}
+\begin{algorithm}
+\caption{Basic simple QR iteration}
+\label{Basic simple QR iteration}
+    \begin{algorithmic}
+        \STATE \(A^{(0)} = A\)
+        \STATE for k = 1,2,...
+            \STATE \quad \(Q^{(k)}R^{(k)} = A^{(k-1)}\)
+            \STATE \quad \(A^{(k)} := R^{(k)}Q^{(k)}\)
+        \STATE end for
+    \end{algorithmic}
+\end{algorithm}
+That is we compute the QR factorization of $A^{(k-1)}=QR$ and reverse the order to construct $A^{(k)} = RQ$. Finally, $A^{(k)}$ becomes diagonal, with the eigenvalues of A on the diagonal.
+
+As $A^{(k)}$ converges to eigenvalues on the diagonal, the product of the $Q^{(k)}$'s gives the set of eigenvectors
+That is, denoting
+\begin{equation}
+    Q^{(k)} = Q^{(1)}Q^{(2)}...Q^{(k)}   
+\end{equation}
+We have the relation :$A^{(k)} = ({Q^{(k)}})^TAQ^{(k)}$
+
+Here is an example that A =
+$    \begin{bmatrix}
+         2 & 1 & 1\\
+         1 & 3 & 1\\
+         1 & 1 & 4 \\
+    \end{bmatrix}$
+= $A^{(0)}$
+
+We have 
+\begin{itemize}
+    \item $A^{(0)} = Q^{(1)}R^{(1)}$
+    \item $A^{(1)} = R^{(1)}Q^{(1)} =  \begin{bmatrix}
+         4.17 & 1.1 & -1.27\\
+         1.1 & 2 & 0\\
+         -1.27 & 0 & 2.83 \\
+    \end{bmatrix}$
+    \item $A^{(1)} = Q^{(2)}R^{(2)}$
+    \item $A^{(2)} = R^{(2)}Q^{(2)} = \begin{bmatrix}
+         5.09 & 0.16 & 0.62\\
+         0.16 & 1.86 & -0.55\\
+         0.62 & -0.55 & 2.05 \\
+    \end{bmatrix}$
+\end{itemize}
+Then so to continue, where the true $\Lambda (A) = {5.2143, 2.4608, 1.3249}$. At each iteration, the off-diagonals get closer to zero. And the diagonal entries are converging to the true eigenvalues.
+I would show this in the later code. \ref{Hessenberg QR algorithm} \label{Old friend}
+
+
+
+
+
+\section{Continue QR}
+\label{Section Continue QR}
+\begin{definition}
+\begin{itemize}
+    \item $A\in F^{n*n}$ is called Hermitian iff $A^* = A$
+
+    \item A real Hermitian matrix is called symmetric
+
+    \item $U \in F^{n*n}$ is called unitary if and only if $U^{-1}=U^*$
+
+    \item Real unitary matrices are called orthogonal
+
+    \item $A\in F^{n*n}$ is called normal if $A^*A=AA^*$ Both Hermitian and unitary matrices are normal 
+\end{itemize}
+   
+\end{definition}
+
+\begin{theorem}[Schur decomposition]
+    If $A \in {\mathbb{C}}^{n*n}$ then there is a unitary matrix $U \in {\mathbb{C}}^{n*n}$ such that \begin{equation}
+        U^*AU =T
+    \end{equation}
+    is upper triangular. The diagonal elements of T are the eigenvalues of A
+\end{theorem}
+% This is a more general form compare with similarity transformation \ref{similarity transformation}.
+
+I want to update our Basic simple QR algorithm firstly \ref{Basic simple QR iteration}
+\begin{algorithm}
+\caption{Basic QR iteration}
+\label{Basic  QR iteration}
+    \begin{algorithmic}
+        \STATE \(A^{(0)} = A\) where \(A \in C^{n*n}\)
+        \STATE for k = 1,2,...
+            \STATE \quad \(Q^{(k)}R^{(k)} = A^{(k-1)}\)
+            \STATE \quad \(A^{(k)} := R^{(k)}Q^{(k)}\)
+            \STATE \quad \(U_k := U_{k-1}Q_k\) /*New Transformation matrix*/
+        \STATE end for
+    \end{algorithmic}
+\end{algorithm}
+Above the algorithm , the most important is that $A_{k-1}$ and $A-k$ are unitary similar, where $Q^*$ is like $U^*$ and Q like U. This makes sense to define the new transformation matrix. Compare with the simple one \ref{Basic simple QR iteration}
+\subsection{Visualize QR process}
+This is very similar The difference is that we change 
+\cs{Maybe here one question should be asked is that what is the connection between the transpose and conjugate} This is solved by AI \ref{Q2 connection between transpose and conjugate}
+This is the original Matlab code in file KnownQR, meaning we know the eigenvalues. We use this to visualize how QR work.
+\begin{verbatim}
+function B = KnownQR(A,k)
+
+n = size(A,1);
+
+rand('seed',0);
+
+S=rand(n); S=(S-.5)*2;
+
+B = S*A/S;
+
+for i = 1:k,
+    [Q,R] = qr(B);B = R*Q
+end
+\end{verbatim}
+We use our friend mentioned in \ref{Old friend} with 15 iterations. 
+\begin{verbatim}
+>> B = KnownQR(A,15)
+
+B =
+
+   6.779658778519146   2.452765258721563  15.274081060707617
+  -0.005790271622687   1.866504656290723  -1.380008353420494
+  -0.513857819772608  -0.417752268343135   0.353836565190133
+
+
+B =
+
+   5.628411579886338   0.537102544621570 -15.861156563034445
+   0.114919646595246   2.057474631658400   1.294536902313765
+   0.100362162048824   0.162667761350788   1.314113788455265
+
+
+B =
+
+   5.358556624775437  -0.715227138689700  15.894291616906516
+   0.072750609114941   2.174169084464312  -1.573989786239918
+  -0.026230411101634  -0.109231926555956   1.467274290760254
+
+
+B =
+
+   5.271608822908719  -1.574963983173605 -15.829983882602926
+   0.038820137658178   2.279588925846699   1.751569157129089
+   0.007100727221557   0.074697654763610   1.448802251244583
+
+
+B =
+
+   5.238834385853775  -2.125946998923092  15.759387302591692
+   0.019461974340199   2.355258072758332  -1.838396569906506
+  -0.001894734975520  -0.047124666331803   1.405907541387891
+
+
+B =
+
+   5.225272308412451  -2.455369205421353 -15.707305606549088
+   0.009476934307766   2.402129234701273   1.876851862275362
+   0.000496527692078   0.027816497057916   1.372598456886275
+
+
+B =
+
+   5.219334758602662  -2.643336900703688  15.674499066914080
+   0.004547597651065   2.428965448994385  -1.893041333273394
+  -0.000128452800198  -0.015754470691662   1.351699792402949
+
+
+B =
+
+   5.216647746993044  -2.747686339655403 -15.655392294212231
+   0.002165544636027   2.443729720072715   1.899594745311578
+   0.000032970072009   0.008716491244642   1.339622532934237
+
+
+B =
+
+   5.215408604003128  -2.804742300541240  15.644707337102265
+   0.001027002476369   2.451696102889792  -1.902121144897607
+  -0.000008424170568  -0.004761524251323   1.332895293107077
+
+
+B =
+
+   5.214831128279754  -2.835686518921024 -15.638857008339965
+   0.000485971775786   2.455956174608928   1.903019145898338
+   0.000002147010189   0.002583384035061   1.329212697111316
+
+
+B =
+
+   5.214560452443073  -2.852397775377697  15.635688426883652
+   0.000229680762001   2.458225861709717  -1.903288533271628
+  -0.000000546430517  -0.001396557082365   1.327213685847207
+
+
+B =
+
+   5.214433181927747  -2.861402995520013 -15.633981637566274
+   0.000108480272467   2.459433777788306   1.903333885605690
+   0.000000138964671   0.000753519933934   1.326133040283943
+
+
+B =
+
+   5.214373238156162  -2.866250461469154  15.633064647204074
+   0.000051217669279   2.460076716278456  -1.903311688516491
+  -0.000000035325917  -0.000406152543868   1.325550045565378
+
+
+B =
+
+   5.214344979020206  -2.868858546740017 -15.632572532144447
+   0.000024177035848   2.460419174432372   1.903277871802444
+   0.000000008978102   0.000218801096741   1.325235846547417
+
+
+B =
+
+   5.214331650295096  -2.870261506757610  15.632308523580614
+   0.000011411414892   2.460601751494444  -1.903249386394837
+  -0.000000002281510  -0.000117838052068   1.325066598210455
+
+
+B =
+
+   5.214331650295096  -2.870261506757610  15.632308523580614
+   0.000011411414892   2.460601751494444  -1.903249386394837
+  -0.000000002281510  -0.000117838052068   1.325066598210455
+\end{verbatim}
+
+We introduce again like the iteration methods before the elements of $A_k$ below the diagonal converge to zero like 
+\begin{equation}
+    |{a_{i,j}}^{(k)}| = O (\lambda_i/\lambda_j). i>j.
+\end{equation}
+\label{convergence demostration}
+This rate does not state a rate for the element at position. We claim that it shows
+\begin{itemize}
+    \item The convergence of the algorithm is slow, which can be arbitrarily slow if eigenvalues are very close to each other.
+    \item The algorithm is expansive. Each iteration step requires the computation of the QR factorization of a full n*n matrix, i.e., each single iteration step has a complexity $O(n^3)$. There will be $O(n^4)$ complexity if the number of steps assumed proportional to n. This assumption is not certain as mentioned above.
+\end{itemize}
+\cs{So the Hessenberg QR algorithm is introduced as following}
+
+\subsection{Hessenberg QR algorithm}
+I skipped the way to get the Hessenberg matrix and leave the problem to consider its complexity as a unsolved in chapter \ref{chapter5}.
+Here, we mainly focus on how Hessenber QR algorithm work.
+
+Firstly, I show the Hessenberg 1 Matlab file:
+\begin{verbatim}
+function B = Hessenberg1(A,k)
+
+n = size(A,1)
+
+rand('seed',0);
+
+S=rand(n); S=(S-.5)*2;
+
+H = hess(A);
+
+for i = 1:k,
+    [Q,R] = qr(H); H = R*Q
+end
+\end{verbatim}
+And I used our old friend matrix mentioned in last section to show the process, which I promise to give a demonstration. \label{Hessenberg QR algorithm} If you want to find our old friend,  click \ref{Old friend}. Then the outcome:
+\begin{verbatim}
+Hessenberg1(A,15)
+
+n =
+
+     3
+
+
+H1 =
+
+   2.0000e+00   1.0954e+00  -5.5511e-17
+   1.0954e+00   4.1667e+00   1.2671e+00
+            0   1.2671e+00   2.8333e+00
+
+H3 =
+
+   4.6971e+00   1.1258e+00  -7.2164e-16
+   1.1258e+00   2.6835e+00   5.3808e-01
+            0   5.3808e-01   1.6195e+00
+
+H5 =
+
+   5.1887e+00   2.6518e-01  -8.1185e-16
+   2.6518e-01   2.4558e+00   1.8437e-01
+            0   1.8437e-01   1.3554e+00
+
+H7 =
+
+   5.2131e+00   5.8847e-02  -7.7239e-16
+   5.8847e-02   2.4594e+00   5.4548e-02
+            0   5.4548e-02   1.3275e+00
+
+
+H10 =
+
+   5.2143e+00   6.1811e-03   7.4714e-16
+   6.1811e-03   2.4608e+00  -8.5299e-03
+            0  -8.5299e-03   1.3249e+00
+
+H15 =
+
+   5.2143e+00   1.4470e-04  -7.4190e-16
+   1.4470e-04   2.4608e+00   3.8587e-04
+            0   3.8587e-04   1.3249e+00
+\end{verbatim}
+Actually, it is a little redundant to show all the calculations, so I just left some of them, and for others, I commented them to save space, but you could still find them by calculation yourself or find my comments in GitHub, boring~, Aha. 
+\cs{As we claimed, after transforming to Hessenberg form, the QR algorithm to calculate the Schur form of a matrix can be more economical. Next we see another method to improve, deflation, that is to proceed the matrix with the smaller matrix.}
+
+\subsection{Perfect Shift and Deflation}
+\begin{lemma}
+Let H be an irreducible Hessenberg matrix, i.e., $h_{i+1,i} \neq 0$ for all $i = 1,...,n-1$. Let $H = QR$ be the QR factorization of H. Then for the diagonal elements of R we have \[r_{kk} > 0 \text{ for all } k<n\].
+Thus, if H is singular then $r_{nn}=0$.
+\end{lemma}
+By using the lemma, let $\lambda$ be an eigenvalue of the irreducible Hessenberg matrix H.
+\begin{itemize}
+    \item $H-\lambda I = QR$
+    \item $\bar{H} = RQ + \lambda I$
+\end{itemize}
+Then what we have is 
+\begin{equation}
+    \bar{H} = \begin{bmatrix}
+        \bar{H_1} & h_1 \\
+        0^T & \lambda \\
+    \end{bmatrix}
+\end{equation}
+If we know one eigenvalue, then with the perfect shift to a Hessenberg matrix, the known one is dropped out. We the could deflate.
+Again the algorithm file and the example with our old friend.
+\begin{verbatim}
+function v = Deflation(A,u) %u is the known eigenvalue
+
+n = size(A,1)
+
+rand('seed',0);
+
+S=rand(n); S=(S-.5)*2;
+
+B = S*A/S;
+
+format short e
+
+H = hess(B)
+
+[Q,R] = qr(H-u*eye(n))
+
+H1 = R*Q + u*eye(n)
+format long
+eig(H1(1:n-1,1:n-1))
+\end{verbatim}
+\begin{verbatim}
+Deflation(D,2.4608)
+
+n =
+
+     3
+
+
+H =
+
+   9.9272e-01  -1.0434e-02   4.4100e-01
+   1.4145e+01   5.8162e+00  -7.1592e+00
+            0   3.0165e-01   2.1911e+00
+
+
+Q =
+
+  -1.0323e-01  -7.4016e-01  -6.6446e-01
+   9.9466e-01  -7.6820e-02  -6.8964e-02
+            0  -6.6803e-01   7.4413e-01
+
+
+R =
+
+   1.4221e+01   3.3385e+00  -7.1664e+00
+            0  -4.5155e-01   4.0372e-01
+            0            0   5.4200e-06
+
+
+H1 =
+
+   4.3134e+00  -5.9947e+00  -1.5012e+01
+  -4.4914e-01   2.2258e+00   3.3156e-01
+            0  -3.6207e-06   2.4608e+00
+
+
+ans =
+
+   5.214322123880911
+   1.324873842949257
+\end{verbatim}
+
+\subsection{QR algorithm with Rayleigh quotient shift}
+\cs{The last subsection, we used the known eigenvalue to do the shift or the deflation. However, our goal is to find eigenvalues, how could we do if we do not know any of them?}
+\begin{algorithm}
+\caption{Hessenberg QR algorithm with Rayleigh quotient shift}
+    \begin{algorithmic}
+        \STATE Let \(H_0 = H \in c^{n*n} \) be an upper Hessenberg matrix. Compute its Schur normal form H = UTU
+        \STATE k = 1
+        \STATE for m = n,n-1,...,2 repeat
+        \STATE \quad k = k+1
+        \STATE \quad \(\sigma_k = {h_{m,m}}^(k-1)\)
+        \STATE \quad \(H_{k-1}-\sigma_k I = Q_kR_k\)
+        \STATE \quad \(H_k = R_kQ_k + \sigma_k I\)
+        \STATE \quad \(U_k = U_{k-1}Q_k\)
+        \STATE \quad until \(|{h_{m,m-1}}^k|\) is sufficiently small (The deflation)
+        \STATE end for
+        \STATE \(T = H_k\)
+    \end{algorithmic}
+\end{algorithm}
+
+
+
+
+Now, firstly, let us look an example with our old friend to show how Rayleigh Quotient work nicely but without implementing deflation. Again the Matlab code first,
+\begin{verbatim}
+function B = RayleighQR(A,k)
+
+n = size(A,1)
+
+rand('seed',0);
+
+S=rand(n); S=(S-.5)*2;
+
+B = S*A/S;
+
+format short e
+
+H = hess(B)
+
+for i=1:k,
+    [Q,R] = qr(H-H(n,n)*eye(n));H = R * Q + H(n,n)*eye(n)
+end
+\end{verbatim}
+\begin{verbatim}
+>> RayleighQR(A,8)
+
+n =
+
+     3
+
+H =
+
+   9.9272e-01  -1.0434e-02   4.4100e-01
+   1.4145e+01   5.8162e+00  -7.1592e+00
+            0   3.0165e-01   2.1911e+00
+
+
+H =
+
+   4.5928e+00  -4.9927e+00  -1.5339e+01
+  -4.2085e-01   2.1336e+00   1.0628e-01
+            0  -8.4135e-02   2.2736e+00
+
+
+H =
+
+   5.4655e+00  -5.6049e+00   1.4704e+01
+   1.8436e-01   1.0470e+00   2.5339e+00
+            0  -1.7489e-02   2.4875e+00
+
+
+H =
+
+   5.1143e+00  -5.6182e+00  -1.4924e+01
+  -6.7443e-02   1.4242e+00  -1.6375e+00
+            0   4.1604e-04   2.4615e+00
+
+
+H =
+
+   5.2564e+00  -5.5156e+00   1.4880e+01
+   2.9985e-02   1.2828e+00   2.0167e+00
+            0  -2.5073e-07   2.4608e+00
+
+
+H =
+
+   5.1971e+00  -5.5575e+00  -1.4901e+01
+  -1.1999e-02   1.3421e+00  -1.8570e+00
+            0   9.3266e-14   2.4608e+00
+
+
+H =
+
+   5.2214e+00  -5.5405e+00   1.4892e+01
+   5.0126e-03   1.3177e+00   1.9224e+00
+            0  -1.2798e-26   2.4608e+00
+
+
+H =
+
+   5.2114e+00  -5.5476e+00  -1.4896e+01
+  -2.0573e-03   1.3278e+00  -1.8953e+00
+            0   2.4181e-52   2.4608e+00
+
+
+H =
+
+   5.2155e+00  -5.5447e+00   1.4894e+01
+   8.5052e-04   1.3237e+00   1.9065e+00
+            0 -8.6207e-104   2.4608e+00
+\end{verbatim}
+This example shows that it works on the Hessenberg Matrix very nicely, where the (3,2) element is quadratically converge up to $10^{-104}$ after 8 iterations. 
+
+\subsection{QR algorithm with Single shift and Deflation}
+So by now, combine discussed above, we give a nearly complete QR algorithm with Single shift and Deflation. Still by our old friend \ref{Basic simple QR iteration}. We give the code firstly, and then analysis some of the crucial steps.
+\begin{verbatim}
+%v, the vetcor to store the calculated eigenvalues
+function v = qr_single(H,tol,maxite)
+
+n = size(H,1);
+
+if (n==1)
+    v = H;
+    return;
+end
+
+if (n==2)
+    v=eig(H);
+    return
+end
+
+for i = 1:maxite
+    H = qr_single_step(H)
+% Extracts the absolute values of the diagonal entries of H.
+% These represent approximations of the eigenvalues during iteration.
+    dg = abs(diag(H))
+%Extracts the absolute values of the subdiagonal entries of H 
+%These are monitored to check if off-diagonal elements are small enough to 
+%consider blocks of H as effectively decoupled.
+    sub_dg = abs(diag(H,-1));
+%Convergence check
+    if(any(sub_dg < tol*max(dg(1:end-1),dg(2:end))))
+        break
+    end
+
+end
+%Represent the number of iterations required
+i
+if (i ==maxite)
+    error('Convergence not acieved in maxit iterations');
+end
+
+ind = find(sub_dg < tol * max( dg(1:end-1), dg(2:end) )  );
+
+v = [qr_shift(H(1:ind(1),1:ind(1)),tol,maxite);...
+    qr_shift(H(ind(1)+1:end,ind(1)+1:end),tol,maxite)];
+end
+
+
+%Helper function to do the single shift
+function H = qr_single_step(H)
+
+n = size(H,1);
+
+sigma = H(n,n);
+%QR factorisation
+[Q,R] = qr(H-sigma*eye(n));
+%Update H
+H = R*Q + sigma * eye(n);
+
+end
+\end{verbatim}
+The outcome
+\begin{verbatim}
+>> qr_single(A,0.0001,10)
+
+H =
+
+   1.5000e+00   5.3452e-01   5.4554e-01
+   5.3452e-01   3.1429e+00   1.1664e+00
+   5.4554e-01   1.1664e+00   4.3571e+00
+
+
+dg =
+
+   1.5000e+00
+   3.1429e+00
+   4.3571e+00
+
+
+H =
+
+   1.3476e+00   1.6420e-01   1.8212e-01
+   1.6420e-01   2.6657e+00   7.3836e-01
+   1.8212e-01   7.3836e-01   4.9867e+00
+
+
+dg =
+
+   1.3476e+00
+   2.6657e+00
+   4.9867e+00
+
+
+H =
+
+   1.3297e+00   7.4098e-02   1.1858e-02
+   7.4098e-02   2.4580e+00   7.3288e-02
+   1.1858e-02   7.3288e-02   5.2123e+00
+
+
+dg =
+
+   1.3297e+00
+   2.4580e+00
+   5.2123e+00
+
+
+H =
+
+   1.3273e+00   5.2314e-02   6.1030e-06
+   5.2314e-02   2.4584e+00   5.3477e-05
+   6.1030e-06   5.3477e-05   5.2143e+00
+
+
+dg =
+
+   1.3273e+00
+   2.4584e+00
+   5.2143e+00
+
+
+i =
+
+     4
+
+
+ans =
+
+   1.3249e+00
+   2.4608e+00
+   5.2143e+00
+\end{verbatim}
+The helper function is easy to tell which is similar to how we do the Perfect shift before for one step. The confusing one is how we use it many times taking convergence and deflation into consideration. The comments on the code show the explanation.
+
+\subsection{QR algorithm with Double shift and Deflation}
+Up to now, still, some problems are required to be addressed
+\begin{itemize}
+    \item What if the Hessenberg matrices have complex eigenvalues.
+    \cs{check}
+    \item What if a near singular $H_{1:n-1,1:m-1}$
+\end{itemize}
+We use the implicit Q theorem to solve. The following is the Matlab code again
+\begin{verbatim}
+%v, the vetcor to store the calculated eigenvalues
+function v = qr_double(H,tol,maxite)
+
+n = size(H,1);
+
+if (n==1)
+    v = H;
+    return;
+end
+
+if (n==2)
+    v=eig(H);
+    return
+end
+
+for i = 1:maxite
+    H = qr_double_step(H)
+% Extracts the absolute values of the diagonal entries of H.
+% These represent approximations of the eigenvalues during iteration.
+    dg = abs(diag(H))
+%Extracts the absolute values of the subdiagonal entries of H 
+%These are monitored to check if off-diagonal elements are small enough to 
+%consider blocks of H as effectively decoupled.
+    sub_dg = abs(diag(H,-1));
+%Convergence check
+    if(any(sub_dg < tol*max(dg(1:end-1),dg(2:end))))
+        break
+    end
+
+end
+%Represent the number of iterations required
+i
+if (i ==maxite)
+    error('Convergence not acieved in maxit iterations');
+end
+
+ind = find(sub_dg < tol * max( dg(1:end-1), dg(2:end) )  );
+
+v = [qr_double(H(1:ind(1),1:ind(1)),tol,maxite);...
+    qr_double(H(ind(1)+1:end,ind(1)+1:end),tol,maxite)];
+end
+
+
+function H = qr_double_step(H)
+
+n = size(H,1);
+
+p = n;
+
+q = p-1;
+
+s = H(q,q) + H(p,p); t = H(q,q) * H(p,p) - H(q,p) * H(p,q);
+
+x = H(1,1)^2 + H(1,2) *H(2,1) - s*H(1,1) + t;
+y = H(2,1)*(H(1,1) + H(2,2) - s);
+z = H(2,1) * H(3,2);
+
+for k = 0:1:p-3
+    %determine the householder reflector P with(P_trans)[x,y,z]=alpha*el
+    vec = [x,y,z];
+    e1 = [1,0,0];
+    rho = -sign(x);
+    u = vec - rho*norm(vec)*e1;
+    norm_u = norm(u);
+
+    u = u/norm_u;
+
+    P_trans = eye(3) - 2*u'*u;
+
+    P = P_trans';
+
+    r = max(1,k);
+    H(k+1:k+3,r:n) = P_trans* H(k+1:k+3,r:n);
+
+    r = min(k+4,p);
+    H(1:r,k+1:k+3) = H(1:r,k+1:k+3)*P;
+
+    x=H(k+2,k+1);
+    y=H(k+3,k+1);
+
+    if k<p-3
+        z=H(k+4,k+1);
+    end
+    
+end
+
+vec = [x,y];
+r = sqrt(x^2 + y^2);
+c = x/r;
+s = y/r;
+
+P_trans = [c,s;-s,c];
+
+H(q:p,p-2:n) = P_trans*H(q:p,p-2:n);
+H(1:p,p-1:p) = H(1:p,p-1:p)*P_trans';
+
+end
+\end{verbatim}
+And then the outcome of a matrix with its spectrum \[\sigma(A) = 1\pm 2i,3,4,5\pm6i\]
+\begin{verbatim}
+>> A = [7,3,4,-11,-9,-2;-6,4,-5,7,1,12;-1,-9,2,2,9,1;-8,0,-1,5,0,8;-4,3,-5,7,2,10;6,1,4,-11,-7,-1]
+
+A =
+
+     7     3     4   -11    -9    -2
+    -6     4    -5     7     1    12
+    -1    -9     2     2     9     1
+    -8     0    -1     5     0     8
+    -4     3    -5     7     2    10
+     6     1     4   -11    -7    -1
+
+>> H = hess(A)
+
+H =
+
+   7.0000e+00   7.2761e+00   5.8120e+00  -1.3970e-01   9.0152e+00   7.9363e+00
+   1.2369e+01   4.1307e+00   1.8969e+01  -1.2071e+00   1.0683e+01   2.4160e+00
+            0  -7.1603e+00   2.4478e+00  -5.6559e-01  -4.1814e+00  -3.2510e+00
+            0            0  -8.5988e+00   2.9151e+00  -3.4169e+00   5.7230e+00
+            0            0            0   1.0464e+00  -2.8351e+00  -1.0979e+01
+            0            0            0            0   1.4143e+00   5.3415e+00
+
+>> qr_double(H, 0.0001,10)
+
+H =
+
+   7.3726e+00   7.8168e+00   1.5004e+01   2.6227e+00  -1.1275e+01  -1.5153e+01
+  -5.4263e+00   5.5094e+00   4.5531e+00  -2.0647e+00   2.7264e+00  -1.5961e+01
+   5.1845e-17  -1.5197e+00  -8.4844e-02   3.3919e-01   3.8467e+00  -7.1876e+00
+   3.1445e-16  -1.1102e-16   1.2899e+00   5.4896e+00  -1.1326e+01  -2.7307e+00
+            0  -1.1102e-16   1.6653e-16   1.2807e+00  -1.8219e+00  -2.2283e+00
+            0            0            0            0   1.7735e-01   2.5352e+00
+
+
+dg =
+
+   7.3726e+00
+   5.5094e+00
+   8.4844e-02
+   5.4896e+00
+   1.8219e+00
+   2.5352e+00
+
+
+H =
+
+   5.0347e+00   6.0200e+00   1.2823e+00   4.3151e+00  -1.4276e+00   1.4530e+01
+  -5.8753e+00   4.9745e+00   3.0924e+00  -9.3875e+00  -1.7048e+01  -1.4989e+01
+  -7.1628e-17  -2.1113e-01   4.0050e+00   3.9357e+00  -1.1420e+01  -5.2851e+00
+   1.4431e-17  -2.3419e-17  -7.2895e-01   3.0450e+00  -2.9792e+00   1.0293e+01
+            0  -6.9389e-18   3.5182e-17   1.7881e+00  -1.0905e+00   2.9351e+00
+            0            0            0  -6.9389e-18  -5.9078e-02   3.0313e+00
+
+
+dg =
+
+   5.0347e+00
+   4.9745e+00
+   4.0050e+00
+   3.0450e+00
+   1.0905e+00
+   3.0313e+00
+
+
+H =
+
+   4.9678e+00   5.9899e+00   1.1266e+01   3.2108e+00  -1.2650e+01  -7.2875e+00
+  -6.0214e+00   4.9911e+00   7.9362e+00  -3.1195e+00  -5.4726e+00  -1.9798e+01
+  -1.3422e-17   1.8747e-02   3.1176e+00   2.6606e+00  -2.0675e+00  -1.1650e+01
+   2.4095e-18   3.9031e-18   7.8103e-01   7.5711e+00  -7.8298e+00   1.6805e+00
+            0   8.6736e-19  -1.6371e-17   5.2705e+00  -4.6466e+00   2.4358e-01
+            0            0   3.4694e-18            0   1.6115e-04   2.9990e+00
+
+
+dg =
+
+   4.9678e+00
+   4.9911e+00
+   3.1176e+00
+   7.5711e+00
+   4.6466e+00
+   2.9990e+00
+
+
+i =
+
+     3
+
+
+H =
+
+   5.0037e+00   6.0004e+00   4.6120e+00   1.4495e+01   4.5459e+00
+  -6.0032e+00   4.9996e+00  -4.1410e+00  -7.7677e+00  -8.4008e+00
+  -5.1077e-19  -4.5480e-03   3.6691e+00   2.3426e+00   1.0357e+01
+  -2.1684e-19   7.8605e-19   3.5761e-01   2.6741e-01  -7.6211e+00
+            0   2.1684e-19            0   6.2195e-01   2.0612e+00
+
+
+dg =
+
+   5.0037e+00
+   4.9996e+00
+   3.6691e+00
+   2.6741e-01
+   2.0612e+00
+
+
+H =
+
+   5.0004e+00   6.0001e+00  -2.4882e+00   1.7626e+00  -6.3030e+00
+  -5.9989e+00   5.0002e+00  -6.7630e+00  -9.3373e+00  -1.4771e+01
+  -5.9991e-21   1.0237e-03   4.0025e+00  -3.7049e+00   9.4445e+00
+            0   1.7619e-21   1.1937e-02   4.1731e+00  -6.6025e+00
+            0   3.3881e-21  -8.6736e-19   2.1262e+00  -2.1752e+00
+
+
+dg =
+
+   5.0004e+00
+   5.0002e+00
+   4.0025e+00
+   4.1731e+00
+   2.1752e+00
+
+
+H =
+
+   4.9997e+00   5.9999e+00  -7.2807e+00   5.0539e+00   1.7273e+01
+  -6.0000e+00   5.0000e+00   1.9673e-01   4.7915e+00  -3.9449e-01
+  -5.7067e-20  -2.6181e-04   4.0008e+00   5.4252e+00  -8.5177e+00
+  -4.2352e-22   5.8066e-22   2.6541e-05   4.8089e+00  -5.2944e+00
+            0   1.0588e-22            0   3.4953e+00  -2.8084e+00
+
+
+dg =
+
+   4.9997e+00
+   5.0000e+00
+   4.0008e+00
+   4.8089e+00
+   2.8084e+00
+
+
+i =
+
+     3
+
+
+H =
+
+   4.0008e+00   9.9897e+00  -1.4809e+00
+   1.3817e-10   1.3510e+00  -4.9716e-01
+            0   8.2923e+00   6.4950e-01
+
+
+dg =
+
+   4.0008e+00
+   1.3510e+00
+   6.4950e-01
+
+
+i =
+
+     1
+
+
+ans =
+
+   4.9998e+00 + 6.0000e+00i
+   4.9998e+00 - 6.0000e+00i
+   4.0008e+00 + 0.0000e+00i
+   1.0002e+00 + 1.9999e+00i
+   1.0002e+00 - 1.9999e+00i
+   2.9990e+00 + 0.0000e+00i
+
+>> 
+\end{verbatim}
+
+\section{Summary}

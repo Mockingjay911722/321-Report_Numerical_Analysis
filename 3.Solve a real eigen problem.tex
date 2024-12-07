@@ -1,0 +1,132 @@
+\chapter{Solve a real eigenvalue problem }
+\label{chapter3}
+
+To solve the given eigenvalue problem using the finite difference method, we will:
+\begin{enumerate}
+    \item Discretize the differential equation using the finite difference method.
+    \item Solve the resulting generalized eigenvalue problem.
+    \item Identify negative eigenvalues and the smallest positive eigenvalue.
+    \item Plot the corresponding eigenfunctions.
+\end{enumerate}
+
+Discretizing the domain is done by chopping the length of the 1D bar into chunks. That is, define discrete points on the bar
+\[0 = x_0<x_1<x_1<...<x_n<x_{n+1} = 1\], which are referred to as gridpoints $x_i$. We let $u_i$ denote the numerical approximation of the exact solution $u(x_i)$ for $i = 0,1,...,n+1$
+Here we assume evenly spaced intervals/ define the grid spacing h as
+\[h = x_i - x_{i-1} = \frac{1}{n+1}\]
+Note that due to the boundary conditions given $\mu_{(0)} = 1$ and $\mu_{(1)}=1$. Therefore, the unknowns we must solve for are n values, that is $u_1.u_2,...,u_n$(i.e. at non-boundary gridpoints). These gridpoints are referred to as the active gridpoints. 
+
+Recall, finite differences are one approach to obtain discrete approximations of derivatives. For example,
+\[\frac{\partial u}{\partial x} \approx \frac{u_{(x_i)}-u_{(x_{i-1})}}{x_i-x_{i-1}} \approx \frac{T_i - T_{i-1}}{h}\] 
+And then by using the centred finite difference approximation
+\[\frac{\partial^2 u}{\partial x^2} \approx \frac{\frac{T_{i+1-T_i}}{h}-\frac{T_i-T_{i-1}}{h}}{h}=\frac{T_{i+1}-2T_i+T_{i+1}}{h^2}\]
+
+Specifically, let's look at this with a simplified version (only with $-\mu^{''}$ that: given each exact solution a equation relating to its value to its two neighbors:
+
+\begin{equation}
+    -\frac{u_{i+1}-2u_i+u_{i+1}}{h^2} = f_i \text{ for } i = 1,...,n
+\end{equation}
+
+\begin{equation}
+    \frac{1}{h^2} \begin{bmatrix}
+        2 & -1 \\
+        -1 &2 &-1 \\
+        &\ddots & \ddots & \ddots \\
+        & & -1 & 2 & -1\\
+        &&&-1&2\\
+    \end{bmatrix} \begin{bmatrix}
+        u_1 \\ u_2 \\ \vdots \\ u_{n-1} \\u_n
+    \end{bmatrix} = \begin{bmatrix}
+        f_1 \\ f_2 \\ \vdots \\ f_{n-1} \\f_n
+    \end{bmatrix}
+\end{equation}
+
+
+
+Then the code is shown:
+\label{Code}
+\begin{verbatim}
+% Parameters
+N = 150;               % Number of interior points
+h = 1 / (N + 1);       % Step size
+x = linspace(0, 1, N + 2)'; % Grid points including boundaries
+
+% Define a(x)
+a = zeros(N, 1);
+for i = 1:N
+    xi = x(i+1); % Interior points
+    if xi < 1/4 || xi > 3/4
+        a(i) = 20;
+    else
+        a(i) = 10;
+    end
+end
+
+% Construct the finite difference matrix
+A = zeros(N, N);
+for i = 1:N
+    if i > 1
+        A(i, i-1) = -1 / h^2;   % Coefficient for u_{i-1}
+    end
+    A(i, i) = 2 / h^2 + a(i); % Coefficient for u_i
+    if i < N
+        A(i, i+1) = -1 / h^2;   % Coefficient for u_{i+1}
+    end
+end
+
+% Solve the eigenvalue problem
+[eigenvectors, eigenvalues] = eig(A);
+lambda = diag(eigenvalues); % Extract eigenvalues
+
+% Sort eigenvalues
+[lambda_sorted, idx] = sort(lambda);
+eigenvectors_sorted = eigenvectors(:, idx);
+
+% Extract negative eigenvalues and smallest positive eigenvalue
+negative_eigenvalues = lambda_sorted(lambda_sorted < 0);
+smallest_positive_eigenvalue = min(lambda_sorted(lambda_sorted > 0));
+
+% Display results with 6 significant figures
+disp('Negative Eigenvalues (6 significant figures):');
+fprintf('%.6f\n', negative_eigenvalues);
+
+disp('Smallest Positive Eigenvalue (6 significant figures):');
+fprintf('%.6f\n', smallest_positive_eigenvalue);
+
+% Plot first few eigenfunctions
+figure;
+hold on;
+for k = 1:min(3, length(lambda_sorted)) % Plot first 3 eigenfunctions
+    u_k = [0; eigenvectors_sorted(:, k); 0]; % Add boundary conditions
+    plot(x, u_k, 'DisplayName', ['\lambda = ', num2str(lambda_sorted(k))]);
+end
+hold off;
+xlabel('x');
+ylabel('u(x)');
+title('Eigenfunctions');
+legend show;
+grid on;
+\end{verbatim}
+And then the results:
+
+Firstly:
+\begin{verbatim}
+>> model3
+Negative Eigenvalues (6 significant figures):
+-2.146894
+Smallest Positive Eigenvalue (6 significant figures):
+24.208290
+>> 
+\end{verbatim}
+Then the plot:
+\begin{figure}
+    \centering
+    \label{Figure 1}
+    \includegraphics[width=1.0\columnwidth]{Image/figure1.jpg}
+    \caption[Eigenvectors of the corresponding eigenvalues]{Eigenvectors of the corresponding eigenvalues}
+    \label{}
+\end{figure}
+
+
+
+
+

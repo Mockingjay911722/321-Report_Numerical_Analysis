@@ -1,0 +1,75 @@
+\documentclass{report}
+\usepackage[authoryear,round]{natbib}
+\usepackage{graphicx} % Required for inserting images
+\title{230 Report: the geometry and transformation in cosmology}
+\author{Siquan Chen 2145683}
+\date{April 2024}
+%lemma theorem corollary
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{theorem}[lemma]{Theorem}
+\newtheorem{cor}[lemma]{Corollary}
+%definition example comments
+\newtheorem{definition}[lemma]{Definition}
+\newtheorem{example}[lemma]{Example}
+\newenvironment{comments}{}{}
+
+%math package
+\usepackage{amsmath}
+\usepackage{amssymb} % This package used to use the tlide to express the Scaling relation
+\usepackage[utf8]{inputenc}
+\usepackage{natbib}
+\usepackage{parskip}% This is the package that is used for adding vertical spacing between paragraphs
+\usepackage{ragged2e}% This is the package that automatically breaking without \newline
+\usepackage{setspace} % to permit one-and-a-half or double spacing
+\usepackage{enumerate} % fancy enumerations like (i) (ii) or (a) (b) and suchlike
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{xcolor}
+\usepackage{etoolbox}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+% Redefine numbering styles
+% \renewcommand{\thesection}{\Roman{section}}
+% \renewcommand{\thesubsection}{\thesection.\roman{subsection}}
+% \renewcommand{\thesubsubsection}{\thesubsection.\alph{subsubsection}}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,      % Enable colored links instead of boxes
+    linkcolor=violet,       % Color for internal links (sections, pages)
+    citecolor=black,       % Color for citations
+    urlcolor=violet         % Color for URLs
+}
+\newcommand{\cs}[1]{\textcolor{red}{SQ: \bf #1}}
+\AtBeginDocument{%
+    \let\oldref\ref
+    \renewcommand{\ref}[1]{\textcolor{violet}{\textbf{\oldref{#1}}}}
+}
+
+
+\title{MTH321 Programming Coursework Reading Report}
+\author{Siquan Chen 2145683}
+\date{\today}
+
+% ********************** Format Chapter headings appropriately*************************
+\usepackage{titlesec}
+% \titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter\hsp\textcolor{tcdblue}{|}\hsp}{0pt}{\Huge\bfseries}
+
+\begin{document}
+
+\maketitle
+\pagenumbering{roman}
+
+\tableofcontents
+\input{1.Introduction}
+\input{2.Eigenvalue Problem}
+\input{3.Solve a real eigen problem}
+\input{4.How was helped by AI}
+\input{5.Further Exploring}
+
+
+
+
+\bibliographystyle{apalike}
+\bibliography{references}
+
+
+\end{document}
